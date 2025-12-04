@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Avaliação</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #dc2626;
+            --secondary: #b91c1c;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --gray: #6b7280;
+            --light-gray: #f3f4f6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            margin-bottom: 2rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-container {
+            position: absolute;
+            left: 2.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 220px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .header-content {
+            flex: 1;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .group-selector {
+            margin-bottom: 2rem;
+        }
+        
+        .group-selector label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .group-selector select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border 0.3s ease;
+        }
+        
+        .group-selector select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 2rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .question-block {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .question-block:last-of-type {
+            border-bottom: none;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 700;
+            margin-right: 12px;
+            font-size: 0.95rem;
+        }
+        
+        .question-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .scale-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+            padding: 0 10px;
+        }
+        
+        .scale-number {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--gray);
+        }
+        
+        .scale-number:hover {
+            border-color: var(--primary);
+            background: rgba(220, 38, 38, 0.05);
+            transform: scale(1.1);
+        }
+        
+        .scale-number.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            transform: scale(1.15);
+        }
+        
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: border 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(220, 38, 38, 0.5);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .action-buttons .btn {
+            flex: 1;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 400px;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+        }
+        
+        .results-container {
+            display: none;
+        }
+        
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 16px;
+            padding: 6px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--gray);
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .results-table th,
+        .results-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .results-table th {
+            background: var(--light-gray);
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .results-table tr:hover {
+            background: rgba(220, 38, 38, 0.03);
+        }
+        
+        .rank {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+        
+        .suggestion-group {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .suggestion-group:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestion-group-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .suggestion-item {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .suggestion-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .suggestion-text {
+            color: var(--dark);
+            line-height: 1.6;
+            font-style: italic;
+        }
+        
+        .no-suggestions {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+        
+        .already-voted {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .already-voted i {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            header {
+                padding: 1.5rem;
+                border-radius: 12px;
+                margin-bottom: 1rem;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-container {
+                position: relative;
+                left: auto;
+                top: auto;
+                transform: none;
+                margin-bottom: 1rem;
+            }
+            
+            .header-content {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .tabs {
+                border-radius: 12px;
+                margin-bottom: 1rem;
+                flex-wrap: nowrap;
+            }
+            
+            .tab {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+            
+            .card {
+                padding: 1.25rem;
+                border-radius: 12px;
+                margin-bottom: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+                margin: 1.5rem 0 1rem;
+            }
+            
+            .question-block {
+                margin-bottom: 1.5rem;
+                padding-bottom: 1.5rem;
+            }
+            
+            .question-number {
+                width: 28px;
+                height: 28px;
+                line-height: 28px;
+                font-size: 0.85rem;
+                margin-right: 8px;
+            }
+            
+            .question-title {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+                line-height: 1.5;
+            }
+            
+            .scale-container {
+                gap: 6px;
+                padding: 0;
+                justify-content: space-around;
+            }
+            
+            .scale-number {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+            
+            .scale-labels {
+                font-size: 0.75rem;
+                margin-top: 6px;
+            }
+            
+            textarea {
+                padding: 0.875rem;
+                font-size: 0.95rem;
+                min-height: 100px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-top: 1.5rem;
+            }
+            
+            .btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.95rem;
+                width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1.5rem;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+            
+            .stat-label {
+                font-size: 0.85rem;
+            }
+            
+            .chart-card {
+                padding: 1.25rem;
+            }
+            
+            .results-table {
+                font-size: 0.85rem;
+            }
+            
+            .results-table th,
+            .results-table td {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            .rank {
+                font-size: 1.1rem;
+            }
+            
+            .suggestion-group-title {
+                font-size: 1.1rem;
+                flex-wrap: wrap;
+            }
+            
+            .suggestion-item {
+                padding: 0.875rem;
+            }
+            
+            .suggestion-text {
+                font-size: 0.9rem;
+            }
+            
+            .notification {
+                right: 10px;
+                left: 10px;
+                max-width: calc(100% - 20px);
+                font-size: 0.9rem;
+            }
+            
+            #debug-data {
+                font-size: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .scale-number {
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+            
+            .results-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="senai-logo.png" alt="Logo SENAI" class="logo">
+            </div>
+            <div class="header-content">
+                <h1><i class="fas fa-graduation-cap"></i> Formulário de Avaliação</h1>
+                <p class="subtitle">Curso ADM - 5 Grupos</p>
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" id="evaluation-tab">
+                <i class="fas fa-clipboard-check"></i> Avaliar Grupos
+            </div>
+            <div class="tab" id="results-tab">
+                <i class="fas fa-chart-bar"></i> Ver Resultados
+            </div>
+        </div>
+        
+        <div id="evaluation-form"></div>
+        
+        <div class="results-container" id="results-container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total de Avaliadores</div>
+                    <div class="stat-value" id="total-evaluators">0</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Grupo Melhor Avaliado</div>
+                    <div class="stat-value" id="best-group" style="font-size: 1.5rem;">-</div>
+                    <div class="stat-label" id="best-score">Nota: 0.0</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Média Geral</div>
+                    <div class="stat-value" id="average-score">0.0</div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <canvas id="results-chart"></canvas>
+            </div>
+            
+            <div class="card">
+                <h2 style="margin-bottom: 1.5rem;">Ranking Detalhado</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th width="60">Pos.</th>
+                            <th>Grupo</th>
+                            <th width="120">Nota Média</th>
+                            <th width="120">Avaliações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-list"></tbody>
+                </table>
+            </div>
+            
+            <div class="card">
+                <h2 style="margin-bottom: 1.5rem;">
+                    <i class="fas fa-comments"></i> Sugestões de Melhoria
+                </h2>
+                <div id="suggestions-list"></div>
+            </div>
+            
+            <div class="card" style="background: #f8f9fa; border: 2px solid #e9ecef;">
+                <h3 style="margin-bottom: 1rem; color: #495057;">
+                    <i class="fas fa-bug"></i> Debug - Dados do Sistema
+                </h3>
+                <div id="debug-data" style="font-family: monospace; font-size: 0.85rem; line-height: 1.8;">
+                    Carregando informações de debug...
+                </div>
+                <button class="btn btn-primary" onclick="forceReloadData()" style="margin-top: 1rem;">
+                    <i class="fas fa-sync"></i> Forçar Atualização dos Dados
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text"></span>
+    </div>
+
+    <script>
+      const JSONBIN_CONFIG = {
+        BIN_ID:'69112e5743b1c97be9a37093',
+        API_KEY:'$2a$10$Xfki.O4dtHeYWDyzjTNUl.8gw.dfykj3w7DYS.Om0WN51Ii59NyiS'
+      };
+
+      const groups = [
+        { id: 1, name: "MiniEmpreenda" },
+        { id: 2, name: "Colera Segura" },
+        { id: 3, name: "BeeSPA" },
+        { id: 4, name: "ApitoFinal" },
+        { id: 5, name: "PetCare" }
+      ];
+        
+        const questions = [
+            // Perguntas sobre o PROJETO
+            {
+                id: "q1",
+                text: "Em uma escala de 0 a 10, que nota você daria a ideia do projeto apresentado?",
+                type: "scale",
+                min: 0,
+                max: 10
+            },
+            {
+                id: "q2",
+                text: "Em uma escala de 0 a 5, o quão necessário você julga o projeto apresentado?",
+                type: "scale",
+                min: 0,
+                max: 5
+            },
+            {
+                id: "q3",
+                text: "Em uma escala de 0 a 5, o quão você indicaria o produto do projeto apresentado a um amigo?",
+                type: "scale",
+                min: 0,
+                max: 5
+            },
+            {
+                id: "q4",
+                text: "Você compraria a ideia do projeto apresentado? Justifique sua resposta.",
+                type: "text"
+            },
+            {
+                id: "q5",
+                text: "Qual sugestão você daria para aprimorar o projeto?",
+                type: "text"
+            },
+            // Perguntas sobre a APRESENTAÇÃO
+            {
+                id: "q6",
+                text: "Em uma escala de 0 a 10, quanto o grupo mostrou domínio sobre o conteúdo apresentado?",
+                type: "scale",
+                min: 0,
+                max: 10
+            },
+            {
+                id: "q7",
+                text: "Em uma escala de 0 a 10, que nota você atribui a postura e tom de voz dos integrantes do grupo?",
+                type: "scale",
+                min: 0,
+                max: 10
+            },
+            {
+                id: "q8",
+                text: "Em uma escala de 0 a 10, que nota você atribui a clareza e objetividade da apresentação do projeto?",
+                type: "scale",
+                min: 0,
+                max: 10
+            },
+            {
+                id: "q9",
+                text: "O que mais te chamou a atenção positivamente na apresentação do projeto?",
+                type: "text"
+            },
+            {
+                id: "q10",
+                text: "Qual sugestão você daria para melhorar a apresentação?",
+                type: "text"
+            }
+        ];
+        
+        let selectedGroupId = null;
+        let evaluations = {};
+        let allEvaluations = {};
+        let currentEvaluationData = {};
+        let chart = null;
+        let userEvaluations = {};
+
+        function initEvaluator() {
+            let voterId = localStorage.getItem('voterId');
+            if (!voterId) {
+                voterId = 'voter_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('voterId', voterId);
+            }
+            return voterId;
+        }
+
+        async function saveEvaluation() {
+            if (!selectedGroupId) {
+                showNotification('Por favor, selecione um grupo para avaliar.', 'error');
+                return false;
+            }
+
+            try {
+                const voterId = initEvaluator();
+                const currentData = await fetchData();
+                
+                if (!currentData.evaluations) {
+                    currentData.evaluations = {};
+                }
+                
+                if (!currentData.evaluations[voterId]) {
+                    currentData.evaluations[voterId] = {};
+                }
+                
+                // Verificar se o usuário já avaliou este grupo
+                if (currentData.evaluations[voterId][selectedGroupId]) {
+                    showNotification('Você já avaliou este grupo. Cada usuário só pode avaliar cada grupo uma vez.', 'error');
+                    return false;
+                }
+                
+                // Garantir que todos os campos estejam presentes
+                const completeEvaluationData = {};
+                questions.forEach(q => {
+                    completeEvaluationData[q.id] = currentEvaluationData[q.id] || '';
+                });
+                
+                // Salvar os dados da avaliação atual
+                currentData.evaluations[voterId][selectedGroupId] = {
+                    ...completeEvaluationData,
+                    timestamp: new Date().toISOString()
+                };
+                
+                currentData.lastUpdate = new Date().toISOString();
+                currentData.totalVoters = Object.keys(currentData.evaluations).length;
+
+                console.log('📝 Salvando avaliação:', currentData.evaluations[voterId][selectedGroupId]);
+                console.log('👥 Total de avaliadores:', currentData.totalVoters);
+
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY,
+                        'X-Bin-Versioning': 'false'
+                    },
+                    body: JSON.stringify(currentData)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Erro na resposta:', response.status, errorText);
+                    throw new Error(`Erro ${response.status}: ${errorText}`);
+                }
+                
+                console.log('✅ Avaliação salva com sucesso!');
+                showNotification('Avaliação salva com sucesso!', 'success');
+                return true;
+            } catch (error) {
+                console.error('❌ Erro ao salvar:', error);
+                showNotification('Erro ao salvar. Verifique sua conexão e tente novamente.', 'error');
+                return false;
+            }
+        }
+
+        async function fetchData() {
+            try {
+                const timestamp = new Date().getTime();
+                const url = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}/latest?t=${timestamp}`;
+                
+                const response = await fetch(url, {
+                    headers: { 
+                        'X-Master-Key': JSONBIN_CONFIG.API_KEY,
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error('❌ Erro ao carregar do JSONBin:', response.status);
+                    const errorText = await response.text();
+                    console.error('❌ Mensagem de erro:', errorText);
+                    // Retornar estrutura vazia se não conseguir carregar
+                    return { evaluations: {}, totalVoters: 0, lastUpdate: new Date().toISOString() };
+                }
+                
+                const data = await response.json();
+                
+                if (!data.record) {
+                    console.log('📝 Criando nova estrutura de dados...');
+                    return { evaluations: {}, totalVoters: 0, lastUpdate: new Date().toISOString() };
+                }
+                
+                // Garantir que a estrutura esteja correta
+                if (!data.record.evaluations) {
+                    data.record.evaluations = {};
+                }
+                
+                console.log('📥 Dados carregados:', data.record);
+                return data.record;
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+                return { evaluations: {}, totalVoters: 0, lastUpdate: new Date().toISOString() };
+            }
+        }
+
+        async function loadAllEvaluations() {
+            const data = await fetchData();
+            allEvaluations = {};
+            userEvaluations = {};
+            
+            const voterId = localStorage.getItem('voterId');
+            
+            console.log('📊 Carregando avaliações do JSONBin:', data);
+            
+            if (data.evaluations) {
+                Object.entries(data.evaluations).forEach(([voterId, voterEvals]) => {
+                    for (const groupId in voterEvals) {
+                        if (!allEvaluations[groupId]) {
+                            allEvaluations[groupId] = [];
+                        }
+                        allEvaluations[groupId].push(voterEvals[groupId]);
+                        
+                        // Armazenar avaliações do usuário atual
+                        if (voterId === localStorage.getItem('voterId')) {
+                            userEvaluations[groupId] = voterEvals[groupId];
+                        }
+                    }
+                });
+            }
+            
+            console.log('✅ Avaliações carregadas:', allEvaluations);
+            console.log('✅ Avaliações do usuário:', userEvaluations);
+            
+            return allEvaluations;
+        }
+
+        function renderEvaluationForm() {
+            currentEvaluationData = {};
+            
+            let html = `
+                <div class="card">
+                    <div class="group-selector">
+                        <label for="group-select">Selecione o grupo que deseja avaliar:</label>
+                        <select id="group-select">
+                            <option value="">-- Selecione um grupo --</option>
+            `;
+            
+            groups.forEach(group => {
+                const alreadyVoted = userEvaluations[group.id];
+                html += `<option value="${group.id}" ${alreadyVoted ? 'disabled' : ''}>${group.name}${alreadyVoted ? ' (✓ Já avaliado)' : ''}</option>`;
+            });
+            
+            html += `
+                        </select>
+                    </div>
+                    
+                    <div id="evaluation-questions" style="display: none;">
+                        <div id="already-voted-message" class="already-voted" style="display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Você já avaliou este grupo!</h3>
+                            <p>Cada usuário só pode avaliar cada grupo uma vez.</p>
+                            <p>Por favor, selecione outro grupo para avaliar.</p>
+                        </div>
+                        
+                        <div id="questions-container">
+                        <h2 class="section-title">
+                            <i class="fas fa-project-diagram"></i> Sobre o PROJETO
+                        </h2>
+            `;
+            
+            // Renderizar perguntas sobre o projeto (q1 a q5)
+            questions.slice(0, 5).forEach((q, index) => {
+                html += renderQuestion(q, index + 1);
+            });
+            
+            html += `
+                        <h2 class="section-title">
+                            <i class="fas fa-chalkboard-teacher"></i> Sobre a APRESENTAÇÃO
+                        </h2>
+            `;
+            
+            // Renderizar perguntas sobre a apresentação (q6 a q10)
+            questions.slice(5, 10).forEach((q, index) => {
+                html += renderQuestion(q, index + 6);
+            });
+            
+            html += `
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="submitEvaluation()" id="submit-btn">
+                                <i class="fas fa-paper-plane"></i> Enviar Avaliação
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('evaluation-form').innerHTML = html;
+            
+            // Configurar evento para mudança de grupo
+            document.getElementById('group-select').addEventListener('change', function() {
+                selectedGroupId = this.value;
+                const alreadyVoted = userEvaluations[selectedGroupId];
+                
+                if (selectedGroupId) {
+                    document.getElementById('evaluation-questions').style.display = 'block';
+                    
+                    if (alreadyVoted) {
+                        document.getElementById('already-voted-message').style.display = 'block';
+                        document.getElementById('questions-container').style.display = 'none';
+                    } else {
+                        document.getElementById('already-voted-message').style.display = 'none';
+                        document.getElementById('questions-container').style.display = 'block';
+                        clearForm();
+                    }
+                } else {
+                    document.getElementById('evaluation-questions').style.display = 'none';
+                }
+            });
+            
+            attachEventListeners();
+        }
+
+        function renderQuestion(q, number) {
+            let html = `<div class="question-block">
+                <div class="question-title">
+                    <span class="question-number">${number}</span>
+                    ${q.text}
+                </div>`;
+            
+            if (q.type === 'scale') {
+                html += '<div class="scale-container">';
+                for (let i = q.min; i <= q.max; i++) {
+                    html += `<div class="scale-number" data-question="${q.id}" data-value="${i}">${i}</div>`;
+                }
+                html += '</div>';
+                html += '<div class="scale-labels"><span>Muito Baixo</span><span>Muito Alto</span></div>';
+            } else if (q.type === 'text') {
+                html += `<textarea data-question="${q.id}" placeholder="Digite sua resposta aqui..." id="textarea-${q.id}"></textarea>`;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        function attachEventListeners() {
+            // Escala numérica
+            document.querySelectorAll('.scale-number').forEach(num => {
+                num.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    const value = parseInt(this.getAttribute('data-value'));
+                    
+                    document.querySelectorAll(`.scale-number[data-question="${question}"]`).forEach(n => {
+                        n.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    currentEvaluationData[question] = value;
+                    console.log(`📝 ${question}: ${value}`);
+                });
+            });
+            
+            // Textarea
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    const question = this.getAttribute('data-question');
+                    currentEvaluationData[question] = this.value;
+                    console.log(`📝 ${question}: "${this.value}"`);
+                });
+            });
+        }
+
+        function clearForm() {
+            currentEvaluationData = {};
+            
+            // Limpar seleções de escala
+            document.querySelectorAll('.scale-number').forEach(num => {
+                num.classList.remove('selected');
+            });
+            
+            // Limpar textareas
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+        }
+
+        async function submitEvaluation() {
+            // Verificar se um grupo foi selecionado
+            if (!selectedGroupId) {
+                showNotification('Por favor, selecione um grupo para avaliar.', 'error');
+                return;
+            }
+            
+            // Verificar se o usuário já avaliou este grupo
+            if (userEvaluations[selectedGroupId]) {
+                showNotification('Você já avaliou este grupo. Cada usuário só pode avaliar cada grupo uma vez.', 'error');
+                return;
+            }
+            
+            // Verificar se todas as perguntas obrigatórias foram respondidas
+            const unanswered = questions.filter(q => {
+                // q4, q5, q9 e q10 são opcionais (texto)
+                if (['q4', 'q5', 'q9', 'q10'].includes(q.id)) return false;
+                return currentEvaluationData[q.id] === undefined || currentEvaluationData[q.id] === '';
+            });
+            
+            if (unanswered.length > 0) {
+                showNotification(`Por favor, responda todas as perguntas obrigatórias antes de enviar. Faltam: ${unanswered.length}`, 'error');
+                return;
+            }
+            
+            // Salvar avaliação
+            const success = await saveEvaluation();
+            if (!success) {
+                return;
+            }
+            
+            // Recarregar avaliações para atualizar o estado
+            await loadAllEvaluations();
+            
+            // Limpar formulário após envio
+            document.getElementById('group-select').value = '';
+            document.getElementById('evaluation-questions').style.display = 'none';
+            selectedGroupId = null;
+            currentEvaluationData = {};
+            
+            // Recarregar o formulário para atualizar a lista de grupos
+            renderEvaluationForm();
+            
+            showNotification('Avaliação enviada com sucesso! Você pode avaliar outro grupo.', 'success');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notification-text');
+            
+            text.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        async function showResults() {
+            // Atualizar dados antes de mostrar os resultados
+            await loadAllEvaluations();
+            
+            console.log('📊 Mostrando resultados com dados:', allEvaluations);
+            
+            // Atualizar estatísticas
+            const totalVoters = Object.keys(allEvaluations).length > 0 ? 
+                new Set(Object.values(allEvaluations).flat().map(e => JSON.stringify(e))).size : 0;
+            document.getElementById('total-evaluators').textContent = totalVoters;
+            
+            // Calcular médias e rankings
+            const groupScores = {};
+            const groupCounts = {};
+            
+            groups.forEach(group => {
+                const groupEvaluations = allEvaluations[group.id] || [];
+                groupCounts[group.id] = groupEvaluations.length;
+                
+                console.log(`📈 Calculando média para ${group.name}:`, groupEvaluations);
+                
+                if (groupEvaluations.length > 0) {
+                    let totalGroupScore = 0;
+                    let validEvaluations = 0;
+                    
+                    groupEvaluations.forEach(evalData => {
+                        let scoreSum = 0;
+                        let scoreCount = 0;
+                        
+                        // Calcular média individual para cada avaliação
+                        ['q1', 'q2', 'q3', 'q6', 'q7', 'q8'].forEach(qId => {
+                            const value = evalData[qId];
+                            if (value !== undefined && value !== '' && !isNaN(Number(value))) {
+                                scoreSum += Number(value);
+                                scoreCount++;
+                            }
+                        });
+                        
+                        if (scoreCount > 0) {
+                            totalGroupScore += scoreSum / scoreCount;
+                            validEvaluations++;
+                        }
+                    });
+                    
+                    groupScores[group.id] = validEvaluations > 0 ? totalGroupScore / validEvaluations : 0;
+                    console.log(`✅ ${group.name}: ${groupScores[group.id]} (${validEvaluations} avaliações válidas)`);
+                } else {
+                    groupScores[group.id] = 0;
+                    console.log(`❌ ${group.name}: Sem avaliações`);
+                }
+            });
+            
+            // Encontrar grupo com maior pontuação
+            let bestGroupId = null;
+            let bestScore = 0;
+            
+            for (const groupId in groupScores) {
+                if (groupScores[groupId] > bestScore) {
+                    bestScore = groupScores[groupId];
+                    bestGroupId = groupId;
+                }
+            }
+            
+            const bestGroup = groups.find(g => g.id == bestGroupId);
+            document.getElementById('best-group').textContent = bestGroup ? bestGroup.name : '-';
+            document.getElementById('best-score').textContent = `Nota: ${bestScore.toFixed(1)}`;
+            
+            // Calcular média geral (apenas grupos com avaliações)
+            const groupsWithEvaluations = Object.values(groupScores).filter(score => score > 0);
+            const averageScore = groupsWithEvaluations.length > 0 ? 
+                groupsWithEvaluations.reduce((sum, score) => sum + score, 0) / groupsWithEvaluations.length : 0;
+            
+            document.getElementById('average-score').textContent = averageScore.toFixed(1);
+            
+            // Atualizar tabela de resultados
+            const resultsList = document.getElementById('results-list');
+            resultsList.innerHTML = '';
+            
+            const sortedGroups = [...groups].sort((a, b) => groupScores[b.id] - groupScores[a.id]);
+            
+            sortedGroups.forEach((group, index) => {
+                const score = groupScores[group.id] || 0;
+                const count = groupCounts[group.id] || 0;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="rank">${index + 1}º</span></td>
+                    <td>${group.name}</td>
+                    <td><strong>${score.toFixed(1)}</strong></td>
+                    <td>${count}</td>
+                `;
+                resultsList.appendChild(row);
+            });
+            
+            // Atualizar gráfico
+            updateChart(groupScores);
+            
+            // Atualizar sugestões
+            updateSuggestions();
+            
+            // Atualizar dados de debug
+            updateDebugData();
+            
+            // Alternar para a aba de resultados
+            document.getElementById('evaluation-tab').classList.remove('active');
+            document.getElementById('results-tab').classList.add('active');
+            document.getElementById('evaluation-form').style.display = 'none';
+            document.getElementById('results-container').style.display = 'block';
+        }
+
+        function updateChart(groupScores) {
+            const ctx = document.getElementById('results-chart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            const labels = groups.map(g => g.name);
+            const data = groups.map(g => groupScores[g.id] || 0);
+            
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nota Média',
+                        data: data,
+                        backgroundColor: '#dc2626',
+                        borderColor: '#b91c1c',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        maxBarThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Desempenho dos Grupos',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateSuggestions() {
+            const suggestionsList = document.getElementById('suggestions-list');
+            suggestionsList.innerHTML = '';
+            
+            let hasSuggestions = false;
+            
+            groups.forEach(group => {
+                const groupEvaluations = allEvaluations[group.id] || [];
+                const projectSuggestions = [];
+                const presentationSuggestions = [];
+                const positiveAspects = [];
+                
+                console.log(`📋 Processando sugestões para ${group.name}:`, groupEvaluations);
+                
+                groupEvaluations.forEach(evalData => {
+                    // Sugestões para o projeto (q5)
+                    if (evalData.q5 && evalData.q5.trim() !== '') {
+                        projectSuggestions.push({
+                            text: evalData.q5,
+                            timestamp: evalData.timestamp
+                        });
+                    }
+                    
+                    // Sugestões para a apresentação (q10)
+                    if (evalData.q10 && evalData.q10.trim() !== '') {
+                        presentationSuggestions.push({
+                            text: evalData.q10,
+                            timestamp: evalData.timestamp
+                        });
+                    }
+                    
+                    // Aspectos positivos (q9)
+                    if (evalData.q9 && evalData.q9.trim() !== '') {
+                        positiveAspects.push({
+                            text: evalData.q9,
+                            timestamp: evalData.timestamp
+                        });
+                    }
+                });
+                
+                console.log(`📝 ${group.name} - Sugestões projeto:`, projectSuggestions.length);
+                console.log(`📝 ${group.name} - Sugestões apresentação:`, presentationSuggestions.length);
+                console.log(`📝 ${group.name} - Aspectos positivos:`, positiveAspects.length);
+                
+                if (projectSuggestions.length > 0 || presentationSuggestions.length > 0 || positiveAspects.length > 0) {
+                    hasSuggestions = true;
+                    
+                    const groupElement = document.createElement('div');
+                    groupElement.className = 'suggestion-group';
+                    
+                    let html = `
+                        <div class="suggestion-group-title">
+                            <i class="fas fa-users"></i> ${group.name}
+                            <span style="font-size: 0.9rem; color: var(--gray); margin-left: auto;">
+                                ${groupEvaluations.length} avaliação(ões)
+                            </span>
+                        </div>
+                    `;
+                    
+                    if (positiveAspects.length > 0) {
+                        html += `
+                            <div style="margin-bottom: 1.5rem;">
+                                <h4 style="color: var(--success); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-thumbs-up"></i> Pontos Positivos Destacados
+                                    <span style="font-size: 0.8rem; color: var(--gray); font-weight: normal;">
+                                        (${positiveAspects.length})
+                                    </span>
+                                </h4>
+                        `;
+                        
+                        positiveAspects.forEach((aspect, index) => {
+                            const date = new Date(aspect.timestamp).toLocaleDateString('pt-BR');
+                            html += `
+                                <div class="suggestion-item" style="border-left-color: var(--success);">
+                                    <div class="suggestion-text">"${aspect.text}"</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray); margin-top: 0.5rem; text-align: right;">
+                                        Enviado em: ${date}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += `</div>`;
+                    }
+                    
+                    if (projectSuggestions.length > 0) {
+                        html += `
+                            <div style="margin-bottom: 1.5rem;">
+                                <h4 style="color: var(--primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-project-diagram"></i> Sugestões para o Projeto
+                                    <span style="font-size: 0.8rem; color: var(--gray); font-weight: normal;">
+                                        (${projectSuggestions.length})
+                                    </span>
+                                </h4>
+                        `;
+                        
+                        projectSuggestions.forEach((suggestion, index) => {
+                            const date = new Date(suggestion.timestamp).toLocaleDateString('pt-BR');
+                            html += `
+                                <div class="suggestion-item">
+                                    <div class="suggestion-text">"${suggestion.text}"</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray); margin-top: 0.5rem; text-align: right;">
+                                        Enviado em: ${date}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += `</div>`;
+                    }
+                    
+                    if (presentationSuggestions.length > 0) {
+                        html += `
+                            <div>
+                                <h4 style="color: var(--primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-chalkboard-teacher"></i> Sugestões para a Apresentação
+                                    <span style="font-size: 0.8rem; color: var(--gray); font-weight: normal;">
+                                        (${presentationSuggestions.length})
+                                    </span>
+                                </h4>
+                        `;
+                        
+                        presentationSuggestions.forEach((suggestion, index) => {
+                            const date = new Date(suggestion.timestamp).toLocaleDateString('pt-BR');
+                            html += `
+                                <div class="suggestion-item">
+                                    <div class="suggestion-text">"${suggestion.text}"</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray); margin-top: 0.5rem; text-align: right;">
+                                        Enviado em: ${date}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += `</div>`;
+                    }
+                    
+                    groupElement.innerHTML = html;
+                    suggestionsList.appendChild(groupElement);
+                }
+            });
+            
+            if (!hasSuggestions) {
+                suggestionsList.innerHTML = `
+                    <div class="no-suggestions">
+                        <i class="fas fa-comment-slash" style="font-size: 3rem; margin-bottom: 1rem; color: var(--gray);"></i>
+                        <p>Nenhuma sugestão de melhoria foi registrada ainda.</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">As sugestões aparecerão aqui após os avaliadores preencherem as questões 4, 5, 9 e 10.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateDebugData() {
+            const debugData = document.getElementById('debug-data');
+            
+            let html = `
+                <div><strong>Total de Avaliadores Únicos:</strong> ${Object.keys(allEvaluations).length > 0 ? 
+                    new Set(Object.values(allEvaluations).flat().map(e => JSON.stringify(e))).size : 0}</div>
+                <div><strong>Última Atualização:</strong> ${new Date().toLocaleString()}</div>
+                <div><strong>ID do Avaliador:</strong> ${localStorage.getItem('voterId')}</div>
+                <div style="margin-top: 10px;"><strong>Avaliações por Grupo:</strong></div>
+            `;
+            
+            groups.forEach(group => {
+                const count = allEvaluations[group.id] ? allEvaluations[group.id].length : 0;
+                html += `<div style="margin-left: 15px;">${group.name}: ${count} avaliação(ões)</div>`;
+            });
+            
+            // Adicionar informações detalhadas para debug
+            html += `<div style="margin-top: 10px;"><strong>Dados Brutos:</strong></div>`;
+            html += `<div style="margin-left: 15px; font-size: 0.7rem; max-height: 200px; overflow-y: auto;">${JSON.stringify(allEvaluations, null, 2)}</div>`;
+            
+            debugData.innerHTML = html;
+        }
+
+        function forceReloadData() {
+            showNotification('Atualizando dados...', 'success');
+            loadAllEvaluations().then(() => {
+                updateDebugData();
+                showNotification('Dados atualizados com sucesso!', 'success');
+            });
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Inicializando sistema de avaliação...');
+            
+            // Inicializar avaliador
+            initEvaluator();
+            
+            // Carregar avaliações existentes
+            await loadAllEvaluations();
+            
+            // Renderizar formulário de avaliação
+            renderEvaluationForm();
+            
+            // Configurar tabs
+            document.getElementById('evaluation-tab').addEventListener('click', function() {
+                document.getElementById('evaluation-tab').classList.add('active');
+                document.getElementById('results-tab').classList.remove('active');
+                document.getElementById('evaluation-form').style.display = 'block';
+                document.getElementById('results-container').style.display = 'none';
+            });
+            
+            document.getElementById('results-tab').addEventListener('click', function() {
+                document.getElementById('results-tab').classList.add('active');
+                document.getElementById('evaluation-tab').classList.remove('active');
+                document.getElementById('evaluation-form').style.display = 'none';
+                document.getElementById('results-container').style.display = 'block';
+                showResults();
+            });
+            
+            console.log('✅ Sistema inicializado com sucesso!');
+        });
+    </script>
+</body>
+</html>
